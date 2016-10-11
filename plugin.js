@@ -20,9 +20,9 @@
  */
 
 CKEDITOR.plugins.add('video', {
-	requires: 'widget',
+	//requires: 'widget',
 	lang: 'de,en,es',
-	icons: 'icon',
+	icons: 'video',
 	onLoad: function() {
 		CKEDITOR.addCss(
 			'img.cke_video {' +
@@ -43,7 +43,8 @@ CKEDITOR.plugins.add('video', {
 		editor.ui.addButton('Video', {
 			label: editor.lang.video.toolbar,
 			command: 'Video',
-			icon: this.path + 'images/icon.png'
+			toolbar: 'insert',
+			icon: this.path + 'images/video.png'
 		});
 
 		// If the "menu" plugin is loaded, register the menu items.

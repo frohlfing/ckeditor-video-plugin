@@ -4,10 +4,6 @@ CKEDITOR.dialog.add('video', function(editor)
 	{
 		var value = this.getValue();
 
-		if (!value && this.id=='id') {
-			value = generateId();
-		}
-
 		videoNode.setAttribute(this.id, value);
 
 		if (!value) {
@@ -43,11 +39,6 @@ CKEDITOR.dialog.add('video', function(editor)
 		if (videoNode) {
 			this.setValue(videoNode.getAttribute(this.id));
 		}
-		else {
-			if (this.id == 'id') {
-				this.setValue(generateId());
-			}
-		}
 	}
 
 	function loadSrc(videoNode, videos)
@@ -60,43 +51,33 @@ CKEDITOR.dialog.add('video', function(editor)
 		if (!video) {
 			return;
 		}
-		this.setValue(video[ id ]);
+		this.setValue(video[id]);
 	}
 
-	function generateId()
-	{
-		var now = new Date();
-		return 'video' + now.getFullYear() + now.getMonth() + now.getDate() + now.getHours() + now.getMinutes() + now.getSeconds();
-	}
-
-	// To automatically get the dimensions of the poster image
-	var onImgLoadEvent = function()	{
-		// Image is ready.
-		var preview = this.previewImage;
-		preview.removeListener('load', onImgLoadEvent);
-		preview.removeListener('error', onImgLoadErrorEvent);
-		preview.removeListener('abort', onImgLoadErrorEvent);
-		// if (!this.getValueOf('info', 'width')) {
-		// 	this.setValueOf('info', 'width', preview.$.width);
-		// }
-		// if (!this.getValueOf('info', 'height')) {
-		// 	this.setValueOf('info', 'height', preview.$.height);
-		// }
-	};
-
-	var onImgLoadErrorEvent = function() {
-		// Error. Image is not loaded.
-		var preview = this.previewImage;
-		preview.removeListener('load', onImgLoadEvent);
-		preview.removeListener('error', onImgLoadErrorEvent);
-		preview.removeListener('abort', onImgLoadErrorEvent);
-	};
+	// // To automatically get the dimensions of the poster image
+	// var onImgLoadEvent = function()	{
+	// 	// Image is ready.
+	// 	var preview = this.previewImage;
+	// 	preview.removeListener('load', onImgLoadEvent);
+	// 	preview.removeListener('error', onImgLoadErrorEvent);
+	// 	preview.removeListener('abort', onImgLoadErrorEvent);
+	// 	// 	this.setValueOf('info', 'width', preview.$.width);
+	// 	// 	this.setValueOf('info', 'height', preview.$.height);
+	// };
+    //
+	// var onImgLoadErrorEvent = function() {
+	// 	// Error. Image is not loaded.
+	// 	var preview = this.previewImage;
+	// 	preview.removeListener('load', onImgLoadEvent);
+	// 	preview.removeListener('error', onImgLoadErrorEvent);
+	// 	preview.removeListener('abort', onImgLoadErrorEvent);
+	// };
 
 	return {
 		title: editor.lang.video.dialogTitle,
-		minWidth: 400,
-		minHeight: 200,
-		onShow: function()	{
+		minWidth: 500,
+		minHeight: 120,
+		onShow: function() {
 			// Clear previously saved elements.
 			this.fakeImage = this.videoNode = null;
 			// To get dimensions of poster image
@@ -168,11 +149,11 @@ CKEDITOR.dialog.add('video', function(editor)
 				div.append(newFakeImage);
 			}
 		},
-		onHide: function(){
+		onHide: function() {
 			if (this.previewImage) {
-				this.previewImage.removeListener('load', onImgLoadEvent);
-				this.previewImage.removeListener('error', onImgLoadErrorEvent);
-				this.previewImage.removeListener('abort', onImgLoadErrorEvent);
+				//this.previewImage.removeListener('load', onImgLoadEvent);
+				//this.previewImage.removeListener('error', onImgLoadErrorEvent);
+				//this.previewImage.removeListener('abort', onImgLoadErrorEvent);
 				this.previewImage.remove();
 				this.previewImage = null; // Dialog is closed.
 			}
@@ -189,7 +170,8 @@ CKEDITOR.dialog.add('video', function(editor)
 							{
 								type: 'text',
 								id: 'src0',
-								label: editor.lang.video.sourceVideo,
+								label: editor.lang.common.url,
+								required: true,
 								commit: commitSrc,
 								setup: loadSrc
 							},
@@ -216,44 +198,6 @@ CKEDITOR.dialog.add('video', function(editor)
 							}
 						]
 					},
-					// {
-					// 	type: 'hbox',
-					// 	widths: [ '', '100px', '75px'],
-					// 	children: [
-					// 		{
-					// 			type: 'text',
-					// 			id: 'src1',
-					// 			label: editor.lang.video.sourceVideo,
-					// 			commit: commitSrc,
-					// 			setup: loadSrc
-					// 		},
-					// 		{
-					// 			type: 'button',
-					// 			id: 'browse',
-					// 			hidden: 'true',
-					// 			style: 'display:inline-block;margin-top:10px;',
-					// 			filebrowser: {
-					// 				action: 'Browse',
-					// 				target: 'info:src1',
-					// 				url: editor.config.filebrowserVideoBrowseUrl || editor.config.filebrowserBrowseUrl
-					// 			},
-					// 			label: editor.lang.common.browseServer
-					// 		},
-					// 		{
-					// 			id: 'type1',
-					// 			label: editor.lang.video.sourceType,
-					// 			type: 'select',
-					// 			'default':'video/webm',
-					// 			items:	[
-					// 				[ 'MP4', 'video/mp4' ],
-					// 				[ 'Ogg', 'video/ogg' ],
-					// 				[ 'WebM', 'video/webm' ]
-					// 			],
-					// 			commit: commitSrc,
-					// 			setup: loadSrc
-					// 		}
-					// 	]
-					// }
 					{
 						type: 'hbox',
 						widths: [ '33%', '33%', '33%'],
@@ -262,7 +206,7 @@ CKEDITOR.dialog.add('video', function(editor)
 								type: 'text',
 								id: 'width',
 								label: editor.lang.common.width,
-								'default': 400,
+								'default': editor.config.videoDefaultWidth || 400,
 								validate: CKEDITOR.dialog.validate.notEmpty(editor.lang.video.widthRequired),
 								commit: commitValue,
 								setup: loadValue
@@ -271,7 +215,7 @@ CKEDITOR.dialog.add('video', function(editor)
 								type: 'text',
 								id: 'height',
 								label: editor.lang.common.height,
-								'default': 300,
+								'default': editor.config.videoDefaultHeight || 300,
 								validate: CKEDITOR.dialog.validate.notEmpty(editor.lang.video.heightRequired),
 								commit: commitValue,
 								setup: loadValue
@@ -324,9 +268,9 @@ CKEDITOR.dialog.add('video', function(editor)
 									if (newUrl.length > 0) {	//Prevent from load before onShow
 										dialog = this.getDialog();
 										var preview = dialog.previewImage;
-										preview.on('load', onImgLoadEvent, dialog);
-										preview.on('error', onImgLoadErrorEvent, dialog);
-										preview.on('abort', onImgLoadErrorEvent, dialog);
+										//preview.on('load', onImgLoadEvent, dialog);
+										//preview.on('error', onImgLoadErrorEvent, dialog);
+										//preview.on('abort', onImgLoadErrorEvent, dialog);
 										preview.setAttribute('src', newUrl);
 									}
 								}
