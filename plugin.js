@@ -43,8 +43,7 @@ CKEDITOR.plugins.add('video', {
 		editor.ui.addButton('Video', {
 			label: editor.lang.video.toolbar,
 			command: 'Video',
-			toolbar: 'insert',
-			icon: this.path + 'images/video.png'
+			toolbar: 'insert'
 		});
 
 		// If the "menu" plugin is loaded, register the menu items.
